@@ -12,7 +12,7 @@ rockImage = ["rock01.png","rock02.png","rock03.png","rock04.png","rock05.png",
              "rock21.png","rock22.png","rock23.png","rock24.png","rock25.png",
              "rock26.png","rock27.png","rock28.png","rock29.png","rock30.png"]
 
-explosionSound = ['explosion.wav']
+
              
 #파괴한 운석 수 출력
 
@@ -40,8 +40,10 @@ def writeMessage(text):
     textpos.center = (padWidth/2, padHeight/2)
     gamePad.blit(text, textpos)
     pygame.display.update()
-    
+    pygame.mixer.music.stop()
+    gameOverSound.play()
     sleep(2)
+    pygame.mixer.music.play(-1)
     
     runGame()
 
@@ -66,7 +68,7 @@ def drawObject(obj, x, y):
 
 
 def initGame():
-    global gamePad, clock, backgroud, fighter, missile, explosion, missileSound
+    global gamePad, clock, backgroud, fighter, missile, explosion, missileSound, explosionSound, gameOverSound
     pygame.init()
     gamePad = pygame.display.set_mode((padWidth, padHeight))
     pygame.display.set_caption("pyshooting")            #게임 이름
@@ -76,6 +78,9 @@ def initGame():
     explosion = pygame.image.load("warp.png")           #폭발 이름
     pygame.mixer.music.load("Inner_Sanctum.mp3")        #인트로 이름
     pygame.mixer.music.play(-1)
+    missileSound = pygame.mixer.Sound("missile.wav")
+    gameOverSound = pygame.mixer.Sound("gameOver.wav")
+    explosionSound = pygame.mixer.Sound("explosion2.wav")
     clock = pygame.time.Clock()
 
 #게임 실행
@@ -98,8 +103,10 @@ def runGame():
     rock = pygame.image.load(random.choice(rockImage))      #운석 이미지 로드
     rockSize = rock.get_rect().size                         #운석 크기 
     rockWidth = rockSize[0]                                 #운석 너비
-    rockHeight = rockSize[1]                                #운석 높이    
-
+    rockHeight = rockSize[1]                                #운석 높이
+    # destorySound = pygame.mixer.sound(random.choice(explosionSound))
+    
+    
     rockX = random.randrange(0, padWidth - rockWidth)       #운석의 x좌표 랜덤화
     rockY = 0               #운석의 y좌표
     rockSpeed = 2           #운석의 스피드
@@ -124,7 +131,7 @@ def runGame():
                     fighterX += 5
 
                 elif event.key == pygame.K_SPACE: #미사일 발사
-                                                  #미사일 사운드
+                    missileSound.play()           #미사일 사운드
                     missileX = x + fighterWidth/2 #전투기 최초 x좌표
                     missileY = y - fighterHeight  #전투기 최초 y좌표
                     missileXY.append([missileX, missileY])
@@ -145,9 +152,9 @@ def runGame():
 
 
         #전투기가 운석과 충돌했는지 체크
-        if y < rockY + rockHeight: 
+        if y < rockY + rockHeight:
             if (rockX > x and rockX < x + fighterWidth) or \
-                    (rockX + rockWidth > x and rockWidth < x +fighterWidth): # 이 형식 체크하기
+                (rockX + rockWidth > x and rockX + rockWidth < x +fighterWidth): # 이 형식 체크하기
                                                                             #or로 묶어줄 필요가 있나?
 
                  crash()
@@ -183,6 +190,7 @@ def runGame():
 
         rockY += rockSpeed
 
+        # 운석을 놓친 경우
         if rockY > padHeight:
             rock = pygame.image.load(random.choice(rockImage))
             rockSize = rock.get_rect().size
@@ -207,6 +215,8 @@ def runGame():
             #운석 폭발
 
             drawObject(explosion, rockX, rockY) # 운석 폭발
+            explosionSound.play()
+            
         
 
             #새로운 운석 (랜덤)
@@ -217,6 +227,7 @@ def runGame():
     
             rockX = random.randrange(0, padWidth - rockWidth)
             rockY = 0
+            # destorySound = pygame.mixer.sound(random.choice(explosionSound))
             isShot = False
 
             rockSpeed += 0.2
