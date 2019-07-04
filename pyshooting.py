@@ -76,11 +76,11 @@ def initGame():
     fighter = pygame.image.load("spaceship.png")        #전투기 이름
     missile = pygame.image.load("missile3.png")         #미사일 이름
     explosion = pygame.image.load("warp.png")           #폭발 이름
-    pygame.mixer.music.load("Inner_Sanctum.mp3")        #인트로 이름
+    pygame.mixer.music.load("Inner_Sanctum2.wav")        #인트로 이름
     pygame.mixer.music.play(-1)
-    missileSound = pygame.mixer.Sound("missile.wav")
+    missileSound = pygame.mixer.Sound("missile3.wav")
     gameOverSound = pygame.mixer.Sound("gameOver.wav")
-    explosionSound = pygame.mixer.Sound("explosion2.wav")
+    explosionSound = pygame.mixer.Sound("explosion5.wav")
     clock = pygame.time.Clock()
 
 #게임 실행
